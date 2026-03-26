@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     auth_username: str = ""
     auth_password: str = ""
     standalone_mode: bool = False
+    max_saved_configs: int = 25
+    demo_mode: bool = False
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
