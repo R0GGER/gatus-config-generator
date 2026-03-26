@@ -1,0 +1,32 @@
+services:
+  gatus-generator:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./frontend:/app/../frontend
+      - gatus-config:/gatus-config
+    environment:
+      - GATUS_CONFIG_PATH=/gatus-config/config.yaml
+      - SECRET_KEY=changeme-in-production
+      - AUTH_USERNAME=admin
+      - AUTH_PASSWORD=changeme-in-production
+      - STANDALONE_MODE=true # Set to false if you want Gatus and the config generator and deploy/load the configuration to/from Gatus
+    restart: unless-stopped
+
+# Uncomment this if you want to run Gatus and the config generator and deploy/load the configuration to/from Gatus
+#  gatus:
+#    image: ghcr.io/twin/gatus:stable
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - gatus-config:/config
+#      - gatus-data:/data
+#    restart: unless-stopped
+
+volumes:
+  gatus-config:
+  gatus-data:
