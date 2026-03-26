@@ -34,34 +34,50 @@ Copy the output and set it as the `SECRET_KEY` environment variable in `docker-c
 
 ### Start with Docker Compose
 
+```yaml
+services:
+  gatus-generator:
+    image: ghcr.io/r0gger/gatus-config-generator:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - gatus-config:/gatus-config
+    environment:
+      - GATUS_CONFIG_PATH=/gatus-config/config.yaml
+      - SECRET_KEY=changeme-in-production
+      #- AUTH_USERNAME=admin
+      #- AUTH_PASSWORD=changeme-in-production
+      - STANDALONE_MODE=true # Set to false if you want Gatus and the config generator and deploy/load the configuration to/from Gatus
+    restart: unless-stopped
+
+# Uncomment this if you want to run Gatus and the config generator and deploy/load the configuration to/from Gatus
+#  gatus:
+#    image: ghcr.io/twin/gatus:stable
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - gatus-config:/config
+#      - gatus-data:/data
+#    restart: unless-stopped
+
+volumes:
+  gatus-config:
+  gatus-data:
+```
+
 ```bash
 docker compose up -d
 ```
 
-This starts:
-- `gatus-generator` on port **8000** (the config generator)
-- `gatus` on port **8080** (the monitoring dashboard)
+Go to `gatus-generator` in your browser: **http://localhost:8000**
 
-They share a Docker volume (`gatus-config`). Every time you deploy via the generator, Gatus automatically detects the change through hot-reload.
+#### Optional
+If `STANDALONE_MODE=false` and the service `gatus` in docker-compose.yml is uncommented, go to `gatus` on port **8080** (Uptime Monitoring dashboard).
 
-Open your browser at: **http://localhost:8000**
+They share a Docker volume (`gatus-config`). Every time you deploy via the generator, Gatus automatically detects the change through hot-reload. 
 
-### Run with Docker (standalone)
-
-If you only need the generator without Gatus:
-
-```bash
-docker build -t gatus-generator ./backend
-
-docker run -d \
-  -p 8000:8000 \
-  -e SECRET_KEY=<your-generated-key> \
-  -e GATUS_CONFIG_PATH=/gatus-config/config.yaml \
-  -e AUTH_USERNAME=admin \
-  -e AUTH_PASSWORD=<your-password> \
-  -v gatus-config:/gatus-config \
-  gatus-generator
-```
+Load Deployed config from Gatus: Menu-item: Saved / import > Import > Deployed configuration: Load Deployed
+Deploy config to Gatus: Config preview (yaml editor) > Deploy
 
 ## Authentication
 
@@ -77,7 +93,7 @@ To enable authentication, uncomment (or add) the following lines in `docker-comp
 Then restart the container:
 
 ```bash
-docker compose up -d --build
+docker compose up -d
 ```
 
 When enabled, the browser will display a login prompt on the first API request. Credentials are cached for the duration of the browser session.
