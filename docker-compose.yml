@@ -8,6 +8,7 @@ services:
     environment:
       - GATUS_CONFIG_PATH=/gatus-config/config.yaml
       - SECRET_KEY=changeme-in-production
+      - MAX_SAVED_CONFIGS=25
       #- AUTH_USERNAME=admin
       #- AUTH_PASSWORD=changeme-in-production
       - STANDALONE_MODE=true # Set to false if you want Gatus and the config generator and deploy/load the configuration to/from Gatus
