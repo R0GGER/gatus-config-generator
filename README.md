@@ -71,13 +71,13 @@ docker compose up -d
 
 Go to `gatus-generator` in your browser: **http://localhost:8000**
 
-#### Optional
-If `STANDALONE_MODE=false` and the service `gatus` in docker-compose.yml is uncommented, go to `gatus` on port **8080** (Uptime Monitoring dashboard).
+#### Optional: Running with Gatus
+If `STANDALONE_MODE=false` and the `gatus` service in `docker-compose.yml` is uncommented, the Gatus uptime monitoring dashboard becomes available at **http://localhost:8080**.
 
-They share a Docker volume (`gatus-config`). Every time you deploy via the generator, Gatus automatically detects the change through hot-reload. 
+Both services share a Docker volume (`gatus-config`). When you deploy a configuration through the generator, Gatus automatically picks up the changes via hot-reload.
 
-Load Deployed config from Gatus: Menu-item: Saved / import > Import > Deployed configuration: Load Deployed
-Deploy config to Gatus: Config preview (yaml editor) > Deploy
+- **Deploy to Gatus:** In the config preview (YAML editor), click **Deploy**.
+- **Load deployed config:** Go to **Saved / Import > Import > Deployed configuration**, then click **Load Deployed**.
 
 ## Authentication
 
