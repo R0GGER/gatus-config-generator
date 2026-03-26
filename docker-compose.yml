@@ -1,19 +1,15 @@
 services:
   gatus-generator:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ghcr.io/r0gger/gatus-config-generator:latest
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
-      - ./frontend:/app/../frontend
       - gatus-config:/gatus-config
     environment:
       - GATUS_CONFIG_PATH=/gatus-config/config.yaml
       - SECRET_KEY=changeme-in-production
-      - AUTH_USERNAME=admin
-      - AUTH_PASSWORD=changeme-in-production
+      #- AUTH_USERNAME=admin
+      #- AUTH_PASSWORD=changeme-in-production
       - STANDALONE_MODE=true # Set to false if you want Gatus and the config generator and deploy/load the configuration to/from Gatus
     restart: unless-stopped
 
