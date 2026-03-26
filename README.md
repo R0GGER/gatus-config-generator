@@ -2,7 +2,9 @@
 
 Visual web interface for generating, managing, and deploying [Gatus](https://github.com/TwiN/gatus) `config.yaml` files.
 
-Demo: https://gatus-generator.hibbit.cloud
+**Demo: https://gatus-generator.hibbit.cloud**
+
+> Demo mode - Saving, updating and deleting configurations is disabled.
 
 ## Features
 
