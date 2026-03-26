@@ -17,6 +17,7 @@ export default defineComponent({
     const saveStatus = ref(null)
 
     const standaloneMode = computed(() => store.state.standaloneMode)
+    const demoMode = computed(() => store.state.demoMode)
     const invalidEndpoints = computed(() =>
       config.endpoints.filter(e => !e.name?.trim() || !e.url?.trim())
     )
@@ -139,7 +140,7 @@ export default defineComponent({
     return {
       yaml, lineCount, highlightedYaml, copied,
       deployStatus, deployLoading, validateStatus,
-      saveLoading, saveStatus, standaloneMode,
+      saveLoading, saveStatus, standaloneMode, demoMode,
       hasValidationErrors, invalidEndpoints,
       copyToClipboard, downloadYaml, validateYaml, deployYaml, saveConfig,
     }
@@ -157,14 +158,14 @@ export default defineComponent({
             {{ copied ? '✓ Copied' : '⧉ Copy' }}
           </button>
           <button class="btn-icon-sm" @click="downloadYaml" :disabled="hasValidationErrors" title="Download">↓ Download</button>
-          <button class="btn-save" @click="saveConfig" :disabled="saveLoading || hasValidationErrors" title="Save config">
+          <button class="btn-save" @click="saveConfig" :disabled="demoMode || saveLoading || hasValidationErrors" :title="demoMode ? 'Saving is disabled in demo mode' : 'Save config'">
             {{ saveLoading ? 'Saving…' : '💾 Save' }}
           </button>
           <button
             class="btn-deploy"
             @click="deployYaml"
-            :disabled="standaloneMode || deployLoading || hasValidationErrors"
-            :title="standaloneMode ? 'Deploy is unavailable in standalone mode (no Gatus instance connected)' : 'Deploy config to Gatus'"
+            :disabled="demoMode || standaloneMode || deployLoading || hasValidationErrors"
+            :title="demoMode ? 'Deploy is disabled in demo mode' : (standaloneMode ? 'Deploy is unavailable in standalone mode (no Gatus instance connected)' : 'Deploy config to Gatus')"
           >
             {{ deployLoading ? 'Deploying…' : '🚀 Deploy' }}
           </button>

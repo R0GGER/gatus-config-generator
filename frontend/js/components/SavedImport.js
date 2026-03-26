@@ -21,6 +21,10 @@ export default defineComponent({
       config.endpoints.some(e => !e.name?.trim() || !e.url?.trim())
     )
 
+    const maxSavedConfigs = computed(() => store.state.maxSavedConfigs)
+    const isAtLimit = computed(() => !store.state.savedConfigId && configs.value.length >= maxSavedConfigs.value)
+    const demoMode = computed(() => store.state.demoMode)
+
     async function loadList() {
       loading.value = true
       error.value = null
@@ -225,7 +229,7 @@ export default defineComponent({
     return {
       activeTab,
       configs, loading, error, saveLoading, saveName, saveDescription, saveSuccess,
-      hasEndpointErrors,
+      hasEndpointErrors, maxSavedConfigs, isAtLimit, demoMode,
       saveConfig, loadConfig, deleteConfig, newConfig, store,
       yamlInput, dragActive, importStatus, fileName,
       standaloneMode, deployedLoading, deployedAvailable,
@@ -254,7 +258,10 @@ export default defineComponent({
 
       <!-- ═══ Saved tab ═══ -->
       <div v-if="activeTab === 'saved'" class="tab-content">
-        <div class="save-form">
+        <div v-if="demoMode" class="info-box">
+          <strong>Demo mode</strong> — Saving, updating and deleting configurations is disabled.
+        </div>
+        <div v-else class="save-form">
           <h3 class="subsection-title">{{ store.state.savedConfigId ? 'Update current config' : 'Save current config' }}</h3>
           <div class="form-grid-2">
             <div class="form-field">
@@ -266,10 +273,11 @@ export default defineComponent({
               <input v-model="saveDescription" type="text" class="input-field" placeholder="Optional description" />
             </div>
           </div>
-          <button class="btn-primary" @click="saveConfig" :disabled="saveLoading || !saveName.trim() || hasEndpointErrors">
+          <button class="btn-primary" @click="saveConfig" :disabled="saveLoading || !saveName.trim() || hasEndpointErrors || isAtLimit">
             {{ saveLoading ? 'Saving…' : (store.state.savedConfigId ? '💾 Update' : '💾 Save') }}
           </button>
-          <div v-if="hasEndpointErrors" class="save-feedback status-error">⚠ All endpoints require a name and URL before saving.</div>
+          <div v-if="isAtLimit" class="save-feedback status-error">⚠ Maximum number of saved configs reached ({{ maxSavedConfigs }}). Delete an existing config first.</div>
+          <div v-else-if="hasEndpointErrors" class="save-feedback status-error">⚠ All endpoints require a name and URL before saving.</div>
           <div v-if="saveSuccess" class="save-feedback">{{ saveSuccess }}</div>
         </div>
 
@@ -278,6 +286,10 @@ export default defineComponent({
 
         <div v-if="!loading && configs.length === 0 && !error" class="empty-hint">
           No saved configurations yet.
+        </div>
+
+        <div v-if="configs.length > 0" class="filter-count" style="margin-bottom: 8px;">
+          {{ configs.length }} / {{ maxSavedConfigs }} saved configs
         </div>
 
         <div v-if="configs.length > 0" class="config-list">
@@ -294,7 +306,7 @@ export default defineComponent({
             </div>
             <div class="config-item-actions">
               <button class="btn-secondary btn-sm" @click="loadConfig(c.id)">Load</button>
-              <button class="btn-danger btn-sm" @click="deleteConfig(c.id, c.name)">Delete</button>
+              <button class="btn-danger btn-sm" @click="deleteConfig(c.id, c.name)" :disabled="demoMode">Delete</button>
             </div>
           </div>
         </div>

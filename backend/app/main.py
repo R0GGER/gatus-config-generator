@@ -39,7 +39,12 @@ def on_startup():
 @app.get("/api/health")
 def health():
     settings = get_settings()
-    return {"status": "ok", "standalone_mode": settings.standalone_mode}
+    return {
+        "status": "ok",
+        "standalone_mode": settings.standalone_mode,
+        "max_saved_configs": settings.max_saved_configs,
+        "demo_mode": settings.demo_mode,
+    }
 
 
 if FRONTEND_DIR.exists():

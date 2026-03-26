@@ -84,6 +84,8 @@ const state = reactive({
   activeSection: 'endpoints',
   savedConfigId: null,
   standaloneMode: false,
+  demoMode: false,
+  maxSavedConfigs: 25,
   theme: initialTheme,
 
   config: {
@@ -238,6 +240,8 @@ export const store = {
       if (res.ok) {
         const data = await res.json()
         state.standaloneMode = !!data.standalone_mode
+        state.demoMode = !!data.demo_mode
+        if (data.max_saved_configs != null) state.maxSavedConfigs = data.max_saved_configs
       }
     } catch { /* keep default false */ }
   },

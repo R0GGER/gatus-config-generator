@@ -79,6 +79,8 @@ def validate_yaml(request: ValidateRequest):
 
 @router.post("/")
 def deploy_config(request: DeployRequest, settings: Settings = Depends(get_settings)):
+    if settings.demo_mode:
+        raise HTTPException(status_code=403, detail="Deploy is disabled in demo mode.")
     try:
         yaml.safe_load(request.yaml_content)
     except yaml.YAMLError as e:
