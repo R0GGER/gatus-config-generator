@@ -49,9 +49,10 @@ services:
     environment:
       - GATUS_CONFIG_PATH=/gatus-config/config.yaml
       - SECRET_KEY=changeme-in-production
-      #- AUTH_USERNAME=admin
-      #- AUTH_PASSWORD=changeme-in-production
+      - AUTH_USERNAME=   # auth disabled when empty
+      - AUTH_PASSWORD=   # auth disabled when empty 
       - STANDALONE_MODE=true # Set to false if you want Gatus and the config generator and deploy/load the configuration to/from Gatus
+      - MAX_SAVED_CONFIGS=10
     restart: unless-stopped
 
 # Uncomment this if you want to run Gatus and the config generator and deploy/load the configuration to/from Gatus
