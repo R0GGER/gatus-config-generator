@@ -26,7 +26,9 @@ auth_deps = [Depends(verify_credentials)]
 app.include_router(configs.router, prefix="/api", dependencies=auth_deps)
 app.include_router(deploy.router, prefix="/api", dependencies=auth_deps)
 
-FRONTEND_DIR = Path(__file__).parent.parent.parent / "frontend"
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+if not FRONTEND_DIR.exists():
+    FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
 
 
 @app.on_event("startup")
