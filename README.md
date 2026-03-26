@@ -117,6 +117,9 @@ Environment variables can be set in `docker-compose.yml` under the `gatus-genera
 | `DATABASE_URL` | `sqlite:///./gatus_generator.db` | SQLite path or PostgreSQL connection URL |
 | `AUTH_USERNAME` | _(empty)_ | Username for Basic Auth (auth disabled when empty) |
 | `AUTH_PASSWORD` | _(empty)_ | Password for Basic Auth (auth disabled when empty) |
+| `STANDALONE_MODE` | `false` | Run without Gatus (hides deploy features in the UI) |
+| `DEMO_MODE` | `false` | Demo mode (disables saving, updating, deleting and deploying) |
+| `MAX_SAVED_CONFIGS` | `25` | Maximum number of saved configurations |
 
 ### Gatus: Generate a bcrypt + base64 password (Basic Auth)
 
@@ -142,41 +145,53 @@ Paste the final base64 string into the **Security > Basic Auth** password field 
 ## Project Structure
 
 ```
-gatus-generator/
+gatus-config-generator/
+├── .github/
+│   └── workflows/
+│       └── docker-publish.yml  # CI/CD: build & push Docker image
 ├── backend/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── configs.py     # CRUD for saved configs
-│   │   │   └── deploy.py      # Deployment + validation
-│   │   ├── auth.py            # Optional HTTP Basic Auth
-│   │   ├── main.py            # FastAPI app + static files
-│   │   ├── models.py          # SQLModel schemas
-│   │   ├── database.py        # SQLite engine
-│   │   └── settings.py        # Pydantic settings
-│   ├── requirements.txt
+│   │   │   ├── __init__.py
+│   │   │   ├── configs.py      # CRUD for saved configs
+│   │   │   └── deploy.py       # Deploy, validate & read deployed config
+│   │   ├── __init__.py
+│   │   ├── auth.py             # Optional HTTP Basic Auth
+│   │   ├── database.py         # SQLite / PostgreSQL engine
+│   │   ├── main.py             # FastAPI app, health endpoint & static mount
+│   │   ├── models.py           # SQLModel schemas
+│   │   └── settings.py         # Pydantic settings (env variables)
 │   ├── Dockerfile
-│   └── .env.example
+│   └── requirements.txt
 ├── frontend/
-│   ├── index.html             # Vue 3 SPA (CDN, no build step)
+│   ├── index.html              # Vue 3 SPA (CDN, no build step)
 │   ├── styles.css
+│   ├── favicon.ico
+│   ├── favicon-16x16.png
+│   ├── favicon-32x32.png
+│   ├── apple-touch-icon.png
 │   └── js/
-│       ├── app.js             # Vue app entry
-│       ├── store.js           # Reactive config state
-│       ├── yaml-generator.js  # YAML generation logic
+│       ├── app.js              # Vue app entry
+│       ├── store.js            # Reactive config state
+│       ├── yaml-generator.js   # Config → YAML generation
+│       ├── yaml-parser.js      # YAML → config parsing (import)
 │       └── components/
-│           ├── Sidebar.js
-│           ├── EndpointsEditor.js
-│           ├── EndpointForm.js
-│           ├── ConditionBuilder.js
-│           ├── AlertingSection.js
-│           ├── StorageSection.js
-│           ├── SecuritySection.js
-│           ├── MaintenanceSection.js
-│           ├── UISection.js
 │           ├── AdvancedSection.js
-│           ├── YamlPreview.js
-│           └── SavedConfigs.js
+│           ├── AlertingSection.js
+│           ├── BadgeChartSection.js
+│           ├── ConditionBuilder.js
+│           ├── EndpointForm.js
+│           ├── EndpointsEditor.js
+│           ├── MaintenanceSection.js
+│           ├── SavedImport.js
+│           ├── SecuritySection.js
+│           ├── Sidebar.js
+│           ├── StorageSection.js
+│           ├── UISection.js
+│           └── YamlPreview.js
+├── .gitignore
 ├── docker-compose.yml
+├── LICENSE
 └── README.md
 ```
 
@@ -192,6 +207,7 @@ gatus-generator/
 | POST | `/api/deploy/` | Deploy config to Gatus config path |
 | POST | `/api/deploy/validate` | Validate YAML |
 | GET | `/api/deploy/settings` | Retrieve deploy settings |
+| GET | `/api/deploy/current` | Read the currently deployed configuration |
 | GET | `/api/health` | Health check |
 
 ## Built With
