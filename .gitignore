@@ -2,3 +2,4 @@ backend/app/__pycache__/
 backend/app/api/__pycache__/
 backend/*.db
 docker-compose_dev.yml
+docker-compose_demo.yml
