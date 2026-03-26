@@ -161,8 +161,17 @@ export default defineComponent({
       doImport(yamlInput.value)
     }
 
+    function isYamlFile(name) {
+      const ext = name.split('.').pop().toLowerCase()
+      return ext === 'yaml' || ext === 'yml'
+    }
+
     function handleFile(file) {
       if (!file) return
+      if (!isYamlFile(file.name)) {
+        importStatus.value = { ok: false, message: 'Only .yaml and .yml files are accepted.' }
+        return
+      }
       fileName.value = file.name
       const reader = new FileReader()
       reader.onload = () => {
@@ -335,7 +344,7 @@ export default defineComponent({
             <span class="dropzone-or">or</span>
             <label class="btn-secondary btn-sm dropzone-btn">
               Browse file…
-              <input type="file" accept=".yaml,.yml,.txt" @change="onFileChange" hidden />
+              <input type="file" accept=".yaml,.yml" @change="onFileChange" hidden />
             </label>
             <span v-if="fileName" class="dropzone-filename">{{ fileName }}</span>
           </div>
