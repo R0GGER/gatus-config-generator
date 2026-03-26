@@ -109,8 +109,8 @@ export default defineComponent({
       </div>
 
       <!-- Templates -->
-      <div class="template-bar" v-if="config.endpoints.length === 0">
-        <span class="template-label">Quick start with template:</span>
+      <div class="template-bar">
+        <span class="template-label">Add from template:</span>
         <button
           v-for="tmpl in TEMPLATES"
           :key="tmpl.label"
@@ -143,7 +143,7 @@ export default defineComponent({
 
       <div v-if="config.endpoints.length === 0" class="empty-state">
         <div class="empty-icon">⬡</div>
-        <p>No endpoints yet. Add one or choose a template above.</p>
+        <p>No endpoints yet. Click "+ Add endpoint" or pick a template above.</p>
       </div>
     </div>
   `,
