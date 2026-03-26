@@ -1,5 +1,5 @@
 import { defineComponent, ref, computed } from 'vue'
-import { store } from '../store.js'
+import { store, config } from '../store.js'
 import ConditionBuilder from './ConditionBuilder.js'
 
 const ALERT_TYPES = [
@@ -23,6 +23,8 @@ export default defineComponent({
     const tab = ref('basic')
     const expanded = ref(true)
     const isSsh = computed(() => props.endpoint.url.trim().toLowerCase().startsWith('ssh://'))
+    const isFirst = computed(() => config.endpoints[0]?._id === props.endpoint._id)
+    const isLast = computed(() => config.endpoints[config.endpoints.length - 1]?._id === props.endpoint._id)
 
     const c = props.endpoint.client || (props.endpoint.client = {})
     if (!c.tls) c.tls = { certificateFile: '', privateKeyFile: '', renegotiation: 'never' }
@@ -35,12 +37,13 @@ export default defineComponent({
       expanded.value = !expanded.value
     }
 
-    return { tab, expanded, toggle, store, ALERT_TYPES, isSsh }
+    return { tab, expanded, toggle, store, ALERT_TYPES, isSsh, isFirst, isLast }
   },
   template: `
     <div class="endpoint-card" :class="{ disabled: !endpoint.enabled }">
       <div class="endpoint-header" @click="toggle">
         <div class="endpoint-title-row">
+          <span class="drag-handle" @click.stop title="Drag to reorder">⠿</span>
           <span class="endpoint-toggle">{{ expanded ? '▾' : '▸' }}</span>
           <span class="endpoint-name-label">
             {{ endpoint.name || '(unnamed endpoint)' }}
@@ -49,6 +52,10 @@ export default defineComponent({
           <span class="endpoint-url-label">{{ endpoint.url }}</span>
         </div>
         <div class="endpoint-actions" @click.stop>
+          <div class="move-buttons">
+            <button class="btn-move" @click="store.moveEndpoint(endpoint._id, 'up')" :disabled="isFirst" title="Move up">▲</button>
+            <button class="btn-move" @click="store.moveEndpoint(endpoint._id, 'down')" :disabled="isLast" title="Move down">▼</button>
+          </div>
           <label class="toggle-label">
             <input type="checkbox" v-model="endpoint.enabled" />
             Active

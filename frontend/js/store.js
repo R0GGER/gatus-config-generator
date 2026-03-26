@@ -280,6 +280,47 @@ export const store = {
     }
   },
 
+  moveEndpoint(id, direction) {
+    const arr = state.config.endpoints
+    const idx = arr.findIndex(e => e._id === id)
+    if (idx < 0) return
+    if (direction === 'up' && idx > 0) {
+      const [item] = arr.splice(idx, 1)
+      arr.splice(idx - 1, 0, item)
+    } else if (direction === 'down' && idx < arr.length - 1) {
+      const [item] = arr.splice(idx, 1)
+      arr.splice(idx + 1, 0, item)
+    }
+  },
+
+  reorderEndpoint(fromId, toId) {
+    const arr = state.config.endpoints
+    const fromIdx = arr.findIndex(e => e._id === fromId)
+    const toIdx = arr.findIndex(e => e._id === toId)
+    if (fromIdx < 0 || toIdx < 0 || fromIdx === toIdx) return
+    const [item] = arr.splice(fromIdx, 1)
+    const insertIdx = arr.findIndex(e => e._id === toId)
+    arr.splice(insertIdx, 0, item)
+  },
+
+  sortEndpoints(sortBy) {
+    const arr = state.config.endpoints
+    const getType = (url) => {
+      const m = (url || '').match(/^(\w+):\/\//)
+      return m ? m[1].toLowerCase() : 'zzz'
+    }
+    if (sortBy === 'name-asc') {
+      arr.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }))
+    } else if (sortBy === 'name-desc') {
+      arr.sort((a, b) => b.name.localeCompare(a.name, undefined, { sensitivity: 'base' }))
+    } else if (sortBy === 'type') {
+      arr.sort((a, b) => {
+        const tc = getType(a.url).localeCompare(getType(b.url))
+        return tc !== 0 ? tc : a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+      })
+    }
+  },
+
   addCondition(endpointId) {
     const ep = state.config.endpoints.find(e => e._id === endpointId)
     if (ep) {

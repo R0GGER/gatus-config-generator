@@ -870,10 +870,123 @@ html, body {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 16px;
 }
 
 .filter-count { font-size: 11px; color: var(--color-text-muted); white-space: nowrap; }
+
+/* ============ SORT CONTROLS ============ */
+
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+}
+
+.sort-label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-right: 2px;
+  white-space: nowrap;
+}
+
+.btn-sort {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  padding: 3px 9px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.btn-sort:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(79, 142, 247, 0.08);
+}
+
+/* ============ MOVE BUTTONS ============ */
+
+.move-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.btn-move {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  border-radius: 3px;
+  padding: 0 5px;
+  font-size: 8px;
+  line-height: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-move:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-move:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+/* ============ DRAG HANDLE ============ */
+
+.drag-handle {
+  color: var(--color-border-light);
+  font-size: 14px;
+  cursor: grab;
+  padding: 0 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  user-select: none;
+}
+
+.endpoint-card:hover .drag-handle {
+  opacity: 0.7;
+}
+
+.drag-handle:hover {
+  opacity: 1 !important;
+  color: var(--color-text-muted);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* ============ DRAG AND DROP ============ */
+
+.endpoint-drag-wrapper {
+  position: relative;
+  transition: opacity 0.15s;
+}
+
+.endpoint-drag-wrapper.is-dragging {
+  opacity: 0.35;
+}
+
+.endpoint-drag-wrapper.drag-over::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-primary);
+  border-radius: 2px;
+  z-index: 1;
+}
 
 .code-snippet {
   font-family: var(--font-mono);
